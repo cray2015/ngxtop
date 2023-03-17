@@ -59,6 +59,7 @@ from __future__ import print_function
 import atexit
 from contextlib import closing
 import curses
+import gzip
 import logging
 import os
 import sqlite3
@@ -315,7 +316,10 @@ def build_source(access_log, arguments):
     if access_log == 'stdin':
         lines = sys.stdin
     elif arguments['--no-follow']:
-        lines = open(access_log)
+        if access_log.endswith('.gz'):
+            lines = gzip.open(access_log)
+        else:
+            lines = open(access_log)
     else:
         lines = follow(access_log)
     return lines
